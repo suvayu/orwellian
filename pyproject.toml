@@ -1,6 +1,6 @@
 [project]
 name = "orwellian"
-version = "0.1.dev"
+version = "0.1.dev0"
 description = "A simple data validation library for Python 3 based on type annotated dataclasses"
 maintainers = "Suvayu Ali"
 repository = "https://github.com/suvayu/orwellian"
@@ -23,7 +23,7 @@ classifiers = [
 [dev-dependencies]
 
 [build-system]
-requires = ["setuptools>=42", "setuptools_scm[toml]>=3.4" ]
+requires = ["setuptools>=42", "wheel" ]
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
