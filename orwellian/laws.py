@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod, update_abstractmethods
+import abc
+import sys
 import types
 from typing import Callable, Iterable, Type, TypeVar
 
@@ -8,7 +9,7 @@ obj_t = TypeVar("obj_t")
 val_t = TypeVar("val_t")
 
 
-class Law(ABC):
+class Law(abc.ABC):
     def __set_name__(self, owner: obj_t, attr: str) -> None:
         self.attr = f"_{attr}"
 
@@ -29,7 +30,7 @@ class Law(ABC):
             return val
         raise TypeError(f"{attr!r}: type mismatch: {type(val)} is not {tp}")
 
-    @abstractmethod
+    @abc.abstractmethod
     def __validate__(self, val: val_t) -> val_t:
         return val
 
@@ -63,4 +64,7 @@ def legislate(name: str, func: Callable, **kwargs) -> Type[Law]:
     namespace = {"__validate__": __validate__}
 
     law = types.new_class(name, bases, {}, lambda ns: ns.update(namespace))
-    return update_abstractmethods(law)
+    if sys.version_info.minor >= 10:
+        return abc.update_abstractmethods(law)
+    else:
+        return law
