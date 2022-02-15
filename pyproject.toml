@@ -1,0 +1,61 @@
+[project]
+name = "orwellian"
+version = "0.1.dev"
+description = "A simple data validation library for Python 3 based on type annotated dataclasses"
+maintainers = "Suvayu Ali"
+repository = "https://github.com/suvayu/orwellian"
+keywords = [ "data", "dataclass", "types", "validation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+
+[dependencies]
+
+[dev-dependencies]
+
+[build-system]
+requires = ["setuptools>=42", "setuptools_scm[toml]>=3.4" ]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+#  --cov=orwellian # disable coverage by default locally
+
+[tool.coverage.run]
+omit = ["*/__init__.py", "*/__main__.py", "*/_types.py"]
+
+[tool.mypy]
+ignore_missing_imports = true
+files = "orwellian"
+
+[tool.black]
+# line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.github
+  | \.mypy_cache
+  | \.pytest_cache
+  | \.vscode
+  | _build
+  | build
+  | dist
+  | .*\.egg-info
+
+  # directories without python source files
+  | tests/data
+  | tmp
+  | htmlcov
+)/
+'''
