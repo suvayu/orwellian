@@ -43,7 +43,7 @@ class Law(abc.ABC):
         raise TypeError(f"{attr!r}: type mismatch: {type(val)} is not {tp}")
 
     @abc.abstractmethod
-    def __validate__(self, val: val_t) -> val_t:
+    def __validate__(self, val: val_t) -> val_t:  # pragma: no cover, virtual
         return val
 
 
