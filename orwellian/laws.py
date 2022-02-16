@@ -10,6 +10,8 @@ val_t = TypeVar("val_t")
 
 
 class Law(abc.ABC):
+    default = None
+
     def __set_name__(self, owner: obj_t, attr: str) -> None:
         self.attr = f"_{attr}"
 
@@ -18,6 +20,16 @@ class Law(abc.ABC):
 
     def __set__(self, obj: obj_t, val: val_t) -> None:
         self._obj = obj
+
+        # when dataclass is instantiated w/ default arguments
+        if val is self:
+            if self.default is None:
+                raise ValueError(
+                    f"{self.attr[1:]!r}: missing value, doesn't have a default"
+                )
+            else:
+                val = self.default  # type: ignore
+
         # set before validation, easier dependent validations
         setattr(obj, self.attr, val)
         self.__validate_type__(val)
@@ -36,7 +48,8 @@ class Law(abc.ABC):
 
 
 class OneOf(Law):
-    def __init__(self, allowed: Iterable):
+    def __init__(self, allowed: Iterable, default=None):
+        self.default = default
         self.allowed = set(allowed)
 
     def __validate__(self, val: val_t) -> val_t:
