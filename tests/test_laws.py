@@ -1,8 +1,8 @@
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 
 import pytest
 
-from orwellian.laws import OneOf
+from orwellian.laws import Base, OneOf
 
 
 @dataclass
@@ -37,3 +37,28 @@ def test_default():
         opt: str = field(default=OneOf("abc", default="a"))
 
     assert choice2().opt == "a"
+
+
+def test_nested():
+    @dataclass
+    class options:
+        opta: str = field(default=OneOf("abc", default="a"))
+        optb: int = field(default=OneOf([1, 2, 3], default=1))
+
+    @dataclass
+    class nested(Base):
+        val: int
+        opts: options
+
+    inner = {"opta": "c", "optb": 2}
+    initialised = nested(val=42, opts=inner)
+    assert asdict(initialised.opts) == inner
+    assert isinstance(initialised.opts, options)
+
+    with pytest.raises(ValueError):
+        inner["opta"] = "d"
+        nested(val=42, opts=inner)
+
+    with pytest.raises(TypeError):
+        inner["opta"] = 1
+        nested(val=42, opts=inner)

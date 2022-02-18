@@ -1,12 +1,32 @@
 from __future__ import annotations
 
 import abc
+from dataclasses import fields, is_dataclass, MISSING
 import sys
 import types
 from typing import Callable, Iterable, Type, TypeVar
 
 obj_t = TypeVar("obj_t")
 val_t = TypeVar("val_t")
+
+
+class Base(abc.ABC):
+    """Dataclasses should derive from this to support nested dataclasses"""
+
+    def __post_init__(self):
+        for fld in fields(self):
+            if is_dataclass(fld.type):
+                defaults = {}
+                for _fld in fields(fld.type):
+                    if _fld.default != MISSING:
+                        val = _fld.default
+                    elif _fld.default_factory != MISSING:
+                        val = _fld.default_factory()
+                    else:
+                        continue
+                    defaults[_fld.name] = val
+                kwargs = getattr(self, fld.name)
+                setattr(self, fld.name, fld.type(**{**defaults, **kwargs}))
 
 
 class Law(abc.ABC):
